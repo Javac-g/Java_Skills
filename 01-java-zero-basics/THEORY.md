@@ -2,25 +2,210 @@
 
 This file contains the theory required for Module 01. It is intentionally focused on concepts and language rules, not on the task solutions.
 
-## 1. Java source structure
+## 1. Complete Java source-file structure
 
-A Java source file may contain package declarations, imports, type declarations, fields, constructors, methods, initializer blocks, comments, and nested types.
+For this course, think about Java structure at **two levels**:
 
-A common class layout convention is:
+1. the structure of the **source file**;
+2. the structure of the **type declared inside it**.
 
-1. constants;
+A conventional Java source file is organized in this general order:
+
+1. package declaration;
+2. import declarations;
+3. top-level type declaration;
+4. members of that type.
+
+Example:
+
+```java
+package com.javacg.skills.basics;
+
+import java.util.List;
+import java.util.Objects;
+
+public class StudentProfile {
+
+    // class members
+}
+```
+
+### 1.1 Package declaration
+
+If present, the package declaration appears before imports and type declarations.
+
+Example:
+
+```java
+package com.javacg.skills.basics;
+```
+
+There can be at most one package declaration in a source file.
+
+The package name normally follows lowercase reverse-domain naming conventions.
+
+### 1.2 Imports
+
+Imports come after the package declaration and before the top-level type declaration.
+
+Example:
+
+```java
+import java.util.List;
+import java.util.Map;
+```
+
+Static imports are also possible:
+
+```java
+import static java.lang.Math.PI;
+```
+
+Imports do not "copy" classes into a file. They allow types or static members to be referenced by shorter names.
+
+Types from `java.lang`, such as `String`, `Object`, and `System`, are implicitly available without explicit imports.
+
+### 1.3 Top-level type declaration
+
+After package and imports comes a top-level declaration such as:
+
+- `class`;
+- `interface`;
+- `enum`;
+- `record`;
+- annotation interface.
+
+Examples:
+
+```java
+public class StudentProfile {}
+```
+
+```java
+public interface Repository {}
+```
+
+```java
+public record Point(int x, int y) {}
+```
+
+A source file can technically contain multiple top-level types, but at most one top-level public type is normally declared, and its name must match the file name.
+
+Example:
+
+```text
+StudentProfile.java
+            ↓
+public class StudentProfile
+```
+
+### 1.4 Complete class header
+
+A class declaration may include:
+
+- annotations;
+- access modifier;
+- other class modifiers;
+- the `class` keyword;
+- class name;
+- generic type parameters;
+- `extends`;
+- `implements`;
+- `permits` for sealed hierarchies.
+
+Example:
+
+```java
+public final class StudentProfile implements Comparable<StudentProfile> {
+}
+```
+
+More advanced combinations such as `abstract`, `sealed`, `non-sealed`, generics, records, and nested types are covered in later modules.
+
+### 1.5 Conventional order of class members
+
+Inside a class, a common readable layout is:
+
+1. constants (`static final`);
 2. static fields;
 3. instance fields;
 4. static initializer blocks;
 5. instance initializer blocks;
 6. constructors;
 7. public methods;
-8. protected/package-private methods;
-9. private helper methods;
-10. getters/setters;
-11. nested types.
+8. protected methods;
+9. package-private methods;
+10. private helper methods;
+11. getters/setters when explicit accessors are appropriate;
+12. nested types.
 
-This is a convention, not a compiler requirement.
+Example skeleton:
+
+```java
+package com.javacg.skills.basics;
+
+import java.util.List;
+
+public class Example {
+
+    // 1. Constants
+    public static final int DEFAULT_LIMIT = 10;
+
+    // 2. Static fields
+    private static int createdCount;
+
+    // 3. Instance fields
+    private String name;
+
+    // 4. Static initializer blocks
+    static {
+        // class-level initialization
+    }
+
+    // 5. Instance initializer blocks
+    {
+        // object-level initialization
+    }
+
+    // 6. Constructors
+    public Example(String name) {
+        this.name = name;
+    }
+
+    // 7. Public methods
+    public String describe() {
+        return buildDescription();
+    }
+
+    // 8. Protected methods
+    protected void validateState() {
+    }
+
+    // 9. Package-private methods
+    void reset() {
+    }
+
+    // 10. Private helper methods
+    private String buildDescription() {
+        return name;
+    }
+
+    // 11. Getters/setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // 12. Nested types
+    static class Helper {
+    }
+}
+```
+
+This ordering is a **style convention**, not a Java compiler requirement. Different teams may use slightly different conventions. The important goals are consistency, readability, and predictability.
 
 ## 2. Identifiers and naming conventions
 
