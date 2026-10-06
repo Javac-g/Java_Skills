@@ -4,6 +4,7 @@ Hands-on software-engineering training repository.
 
 This repository is organized as a sequence of practical modules. Each module contains:
 
+- a dedicated `THEORY.md` with the required theory;
 - a focused topic and learning objectives;
 - implementation tasks;
 - constraints and engineering questions;
