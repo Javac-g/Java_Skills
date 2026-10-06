@@ -200,7 +200,7 @@ The exact behavioral contract is enforced by the tests.
 From this directory run:
 
 ```bash
-mvn test
+gradle test
 ```
 
 Do not alter a failing assertion to make your solution pass. Fix the implementation.
