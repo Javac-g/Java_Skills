@@ -347,7 +347,7 @@ List<int>
 
 ---
 
-# Task 5 — Build a conventionally structured class
+# Task 5 — Build a complete, conventionally structured Java source file
 
 ## What to create
 
@@ -357,9 +357,16 @@ Create:
 
 ## Goal
 
-Create a small class that demonstrates:
+Create a complete Java source file that demonstrates both:
 
-- naming conventions;
+1. correct **source-file structure**;
+2. clear **class-member organization**.
+
+Your file must include and correctly place:
+
+- the package declaration;
+- any required imports;
+- the top-level public class declaration;
 - constants;
 - static state;
 - instance state;
@@ -368,8 +375,39 @@ Create a small class that demonstrates:
 - validation;
 - getters/setters;
 - public behavior;
-- private helper methods;
+- a private helper method;
 - conventional member organization.
+
+## Source-file structure requirements
+
+The file must follow this overall order:
+
+1. package declaration;
+2. imports, if needed;
+3. top-level class declaration;
+4. class members.
+
+The package must be:
+
+```java
+package com.javacg.skills.basics;
+```
+
+Do not add unused imports.
+
+The public top-level type must be named:
+
+```java
+StudentProfile
+```
+
+and must be declared in:
+
+```text
+StudentProfile.java
+```
+
+Inside the class, use a clear conventional order for fields, constructors, methods, accessors, and helper methods.
 
 ## Required state
 
