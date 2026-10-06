@@ -2,6 +2,9 @@ package com.javacg.skills.basics;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -94,6 +97,40 @@ class JavaZeroBasicsTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> ArrayConversions.toPrimitiveArray(Arrays.asList(1, null, 3))
+        );
+    }
+
+
+    @Test
+    void studentProfileSourceFileHasExpectedPackageAndTopLevelClass() throws IOException {
+        Path source = Path.of(
+                "src",
+                "main",
+                "java",
+                "com",
+                "javacg",
+                "skills",
+                "basics",
+                "StudentProfile.java"
+        );
+
+        assertTrue(Files.exists(source), "StudentProfile.java must exist at the required package path");
+
+        String content = Files.readString(source);
+
+        assertTrue(
+                content.contains("package com.javacg.skills.basics;"),
+                "StudentProfile.java must declare package com.javacg.skills.basics"
+        );
+
+        assertTrue(
+                content.matches("(?s).*\\bpublic\\s+class\\s+StudentProfile\\b.*"),
+                "StudentProfile.java must declare public class StudentProfile"
+        );
+
+        assertFalse(
+                content.matches("(?s).*import\\s+java\\.lang\\..*"),
+                "Do not import java.lang types explicitly"
         );
     }
 
