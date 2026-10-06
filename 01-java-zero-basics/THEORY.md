@@ -304,6 +304,311 @@ Java primitive types:
 
 Primitive variables store primitive values directly.
 
+## 7. Primitive widths, ranges, and numeric conversions
+
+It is important to distinguish two ideas:
+
+1. the **logical width/range of a Java primitive type**;
+2. the **actual amount of memory used by a JVM implementation**.
+
+For numeric primitives, Java defines their value ranges precisely. However, the actual memory footprint of fields, array elements, local variables, and stack-frame slots can differ because of JVM implementation details, alignment, object layout, and JIT optimizations.
+
+### 7.1 Primitive types and value ranges
+
+| Type | Logical width | Typical value range |
+|---|---:|---|
+| `byte` | 8 bits | -128 to 127 |
+| `short` | 16 bits | -32,768 to 32,767 |
+| `int` | 32 bits | -2^31 to 2^31 - 1 |
+| `long` | 64 bits | -2^63 to 2^63 - 1 |
+| `float` | 32 bits | IEEE 754 single precision |
+| `double` | 64 bits | IEEE 754 double precision |
+| `char` | 16 bits | 0 to 65,535 |
+| `boolean` | JVM-dependent storage | language values: `true` / `false` |
+
+### 7.2 Important note about `boolean`
+
+The Java language defines only two boolean values:
+
+```java
+true
+false
+```
+
+Do not assume that every boolean always occupies exactly one byte in memory.
+
+Its physical storage depends on context and JVM implementation.
+
+### 7.3 `char` is not a full Unicode character
+
+A Java `char` stores a single UTF-16 code unit.
+
+That means some Unicode characters require two `char` values called a surrogate pair.
+
+So:
+
+```java
+char
+```
+
+is not always equivalent to "one human-visible character".
+
+### 7.4 Integer literal defaults
+
+An integer literal such as:
+
+```java
+100
+```
+
+is normally an `int`.
+
+A long literal normally uses `L`:
+
+```java
+100L
+```
+
+Prefer uppercase `L`, because lowercase `l` can look like the digit `1`.
+
+### 7.5 Floating-point literal defaults
+
+A floating-point literal such as:
+
+```java
+3.14
+```
+
+is a `double` by default.
+
+A `float` literal requires `F` or `f`:
+
+```java
+3.14F
+```
+
+### 7.6 Widening primitive conversions
+
+Java can perform many widening conversions automatically because the destination type can represent a broader category of values.
+
+The common integral widening chain is:
+
+```text
+byte -> short -> int -> long -> float -> double
+```
+
+For `char`:
+
+```text
+char -> int -> long -> float -> double
+```
+
+Examples:
+
+```java
+byte b = 10;
+int i = b;
+long l = i;
+double d = l;
+```
+
+No explicit cast is required.
+
+### 7.7 Widening does not always mean exact precision
+
+This is subtle.
+
+A conversion can be a valid widening conversion even when exact numeric precision may be lost.
+
+For example:
+
+```java
+long value = 9_007_199_254_740_993L;
+double converted = value;
+```
+
+The conversion is legal, but `double` may not represent every `long` value exactly.
+
+### 7.8 Narrowing primitive conversions
+
+Moving to a smaller or incompatible primitive type usually requires an explicit cast.
+
+Example:
+
+```java
+int value = 130;
+byte result = (byte) value;
+```
+
+This can lose information.
+
+A cast does not make the conversion safe; it tells the compiler that you accept the conversion.
+
+### 7.9 Special compile-time constant assignments
+
+Java allows some constant integer expressions to be assigned to smaller integral types without a cast when the value fits.
+
+Example:
+
+```java
+byte b = 100;
+short s = 30_000;
+char c = 65;
+```
+
+But this does not generally apply to arbitrary runtime values:
+
+```java
+int x = 100;
+// byte b = x; // compile error without cast
+```
+
+### 7.10 Binary numeric promotion
+
+Arithmetic on small integral types often promotes operands to `int`.
+
+Example:
+
+```java
+byte a = 10;
+byte b = 20;
+
+// byte c = a + b; // compile error
+int c = a + b;
+```
+
+The expression `a + b` is evaluated as `int`.
+
+This applies to `byte`, `short`, and `char` in many arithmetic expressions.
+
+### 7.11 Promotion with mixed numeric types
+
+A useful mental model for ordinary binary arithmetic is:
+
+- if either operand is `double`, promote the other to `double`;
+- otherwise, if either is `float`, promote the other to `float`;
+- otherwise, if either is `long`, promote the other to `long`;
+- otherwise, both are promoted to `int`.
+
+Examples:
+
+```java
+int + long    -> long
+long + float  -> float
+float + double -> double
+byte + byte   -> int
+char + short  -> int
+```
+
+### 7.12 Why return type does not control expression type
+
+This is critical for Task 1.
+
+```java
+long result = intA * intB;
+```
+
+The multiplication happens first.
+
+Because both operands are `int`, the multiplication itself is performed as `int`.
+
+Only afterward is the result widened to `long`.
+
+Therefore overflow can already have happened.
+
+To force long arithmetic:
+
+```java
+long result = (long) intA * intB;
+```
+
+Now one operand is `long`, so binary numeric promotion makes the other operand `long` before multiplication.
+
+### 7.13 Compound assignment has implicit narrowing behavior
+
+This:
+
+```java
+byte b = 10;
+b += 1;
+```
+
+is legal.
+
+But this:
+
+```java
+byte b = 10;
+// b = b + 1; // compile error
+```
+
+is not equivalent from the compiler's type-checking perspective.
+
+The compound assignment performs an implicit conversion back to the left-hand type.
+
+This can hide narrowing and possible information loss, so understand it rather than memorizing the syntax.
+
+### 7.14 Unary numeric promotion
+
+Unary operators such as `+`, `-`, and `~` can promote smaller integral types to `int`.
+
+Example:
+
+```java
+byte b = 10;
+int x = -b;
+```
+
+### 7.15 Primitive width vs actual JVM memory
+
+Do not use this oversimplified rule:
+
+```text
+"int always occupies exactly 4 bytes everywhere in memory"
+```
+
+The `int` value range is defined as 32-bit signed.
+
+But actual memory use depends on context:
+
+- object fields can be affected by object alignment and padding;
+- arrays have object headers plus aligned element storage;
+- stack frames are JVM implementation details;
+- the JIT may optimize variables away entirely;
+- compressed references affect reference size, not primitive widths.
+
+Later JVM modules will examine object layout, stack frames, alignment, compressed ordinary object pointers, escape analysis, and JOL-style inspection in detail.
+
+### 7.16 Conversion map to remember
+
+For automatic widening:
+
+```text
+byte
+  ↓
+short
+  ↓
+int
+  ↓
+long
+  ↓
+float
+  ↓
+double
+
+char
+  ↓
+int
+  ↓
+long
+  ↓
+float
+  ↓
+double
+```
+
+There is no automatic numeric conversion between `boolean` and numeric types.
+
 ## 7. Reference types
 
 Reference variables store references to objects.
