@@ -31,13 +31,19 @@ Use **Java 21+**.
 
 ---
 
-# Task 1 — Primitive and variable fundamentals
+# Task 1 — Primitive operations and variable fundamentals
+
+## What to create
 
 Create:
 
 `src/main/java/com/javacg/skills/basics/PrimitiveExercises.java`
 
-Required public static methods:
+Create a public class named `PrimitiveExercises`.
+
+## What to implement
+
+Implement these **public static** methods:
 
 ```java
 int add(int a, int b)
@@ -47,29 +53,97 @@ boolean isEven(int value)
 char firstCharacter(String value)
 ```
 
-Requirements:
+### Method behavior
+
+#### `add(int a, int b)`
+
+Return the mathematical sum of `a` and `b`.
+
+Example:
+
+```text
+add(3, 4) -> 7
+```
+
+#### `multiply(int a, int b)`
+
+Return the mathematical product of `a` and `b` as `long`.
+
+The method must work correctly when the result does not fit into an `int`.
+
+Example:
+
+```text
+multiply(2_000_000, 3_000) -> 6_000_000_000L
+```
+
+#### `average(int a, int b)`
+
+Return the arithmetic mean of the two integers as a `double`.
+
+Example:
+
+```text
+average(2, 3) -> 2.5
+```
+
+Do not truncate the fractional part.
+
+#### `isEven(int value)`
+
+Return `true` when the value is even, otherwise return `false`.
+
+Examples:
+
+```text
+isEven(4)  -> true
+isEven(7)  -> false
+isEven(-4) -> true
+```
+
+#### `firstCharacter(String value)`
+
+Return the first character of the supplied string.
+
+Examples:
+
+```text
+firstCharacter("Java") -> 'J'
+firstCharacter("A")    -> 'A'
+```
+
+If `value == null`, throw `IllegalArgumentException`.
+
+If `value` is an empty string, throw `IllegalArgumentException`.
+
+## Restrictions
 
 - do not use streams;
 - do not use collections;
-- `firstCharacter(null)` must throw `IllegalArgumentException`;
-- `firstCharacter("")` must throw `IllegalArgumentException`.
+- do not change the required method signatures.
+
+## Engineering questions
 
 Be ready to explain:
 
 1. Why can `multiply(int, int)` still overflow even if its return type is `long`?
 2. What is the difference between declaration, initialization, and assignment?
 3. Which variables receive default values automatically, and which do not?
-4. Where do the method parameters conceptually live during a method invocation?
+4. Where do method parameters conceptually live during a method invocation?
 
 ---
 
-# Task 2 — References and copying
+# Task 2 — References, mutation, copying, and identity
+
+## What to create
 
 Create:
 
 `src/main/java/com/javacg/skills/basics/ReferenceExercises.java`
 
-Required methods:
+## What to implement
+
+Implement these methods:
 
 ```java
 int[] copyArray(int[] source)
@@ -77,37 +151,79 @@ void incrementFirst(int[] values)
 boolean sameReference(Object first, Object second)
 ```
 
+### `copyArray(int[] source)`
+
+Create and return a **new independent array** containing the same values as `source`.
+
 Requirements:
 
-- `copyArray` must return a new independent array;
-- changing the returned array must not mutate the source;
-- `copyArray(null)` must throw `IllegalArgumentException`;
-- `incrementFirst` must mutate the first element of the passed array;
-- `incrementFirst(null)` and an empty array must throw `IllegalArgumentException`;
-- `sameReference` must test object identity, not logical equality.
+- the returned object must not be the same array instance as `source`;
+- modifying the returned array later must not modify `source`;
+- if `source == null`, throw `IllegalArgumentException`.
+
+Example:
+
+```text
+source = [1, 2, 3]
+copyArray(source) -> [1, 2, 3]
+```
+
+but the result must be a separate array object.
+
+### `incrementFirst(int[] values)`
+
+Increase the first element of the passed array by exactly `1`.
+
+Example:
+
+```text
+[10, 20, 30] -> [11, 20, 30]
+```
+
+Requirements:
+
+- mutate the passed array itself;
+- if `values == null`, throw `IllegalArgumentException`;
+- if the array is empty, throw `IllegalArgumentException`.
+
+### `sameReference(Object first, Object second)`
+
+Return whether both parameters contain the **same object reference**.
+
+This task is about identity, not logical equality.
+
+Examples:
+
+```text
+sameReference(object, object) -> true
+sameReference(new String("java"), new String("java")) -> false
+sameReference(null, null) -> true
+```
+
+## Engineering questions
 
 Be ready to explain:
 
 - what exactly is copied when an array reference is passed to a method;
 - why Java is still pass-by-value;
 - the difference between `==` on primitives and references;
-- where the array object and the local reference are conceptually stored.
+- where the array object and local reference are conceptually stored.
 
 ---
 
-# Task 3 — Initialization order
+# Task 3 — Prove Java initialization order
+
+## What to create
 
 Create:
 
 `src/main/java/com/javacg/skills/basics/InitializationOrderProbe.java`
 
-The class must record initialization events and expose:
+## Goal
 
-```java
-static List<String> createAndGetEvents()
-```
+Build a class that **demonstrates real Java initialization order**.
 
-Calling that method must return exactly:
+Your code must record these events in this exact order:
 
 ```text
 static-field
@@ -117,81 +233,220 @@ instance-block
 constructor
 ```
 
-Constraints:
+Expose:
 
-- the event names must be produced by the corresponding Java mechanisms;
-- do not simply return a hard-coded list from `createAndGetEvents()`;
-- preserve real static/instance initialization semantics.
+```java
+static List<String> createAndGetEvents()
+```
 
-Be ready to explain what changes when inheritance is introduced.
+Calling this method must create an instance and return the recorded events.
+
+## Important constraint
+
+Do **not** simply return this hard-coded list:
+
+```java
+List.of(
+    "static-field",
+    "static-block",
+    "instance-field",
+    "instance-block",
+    "constructor"
+)
+```
+
+Each event must actually be added by the corresponding Java mechanism:
+
+- static field initialization;
+- static initializer block;
+- instance field initialization;
+- instance initializer block;
+- constructor.
+
+The purpose is to prove the language execution order, not reproduce the expected answer manually.
+
+## Engineering question
+
+Explain what changes when a superclass and subclass are involved.
 
 ---
 
-# Task 4 — Primitive array ↔ Collection conversion
+# Task 4 — Convert primitive arrays and collections manually
+
+## What to create
 
 Create:
 
 `src/main/java/com/javacg/skills/basics/ArrayConversions.java`
 
-Required methods:
+## What to implement
 
 ```java
 List<Integer> toList(int[] values)
 int[] toPrimitiveArray(List<Integer> values)
 ```
 
+### `toList(int[] values)`
+
+Convert an `int[]` into a `List<Integer>`.
+
+Example:
+
+```text
+[1, 2, 3] -> [1, 2, 3]
+```
+
 Requirements:
 
-- preserve element order;
-- an empty input produces an empty result;
-- `null` input must throw `IllegalArgumentException`;
-- `toPrimitiveArray` must reject a list containing `null`;
-- returned data structures must be independent from their inputs.
+- preserve order;
+- an empty array returns an empty list;
+- if `values == null`, throw `IllegalArgumentException`;
+- the returned list must be independent from the source array;
+- implement the conversion explicitly with a loop.
 
-Restrictions for this module:
+### `toPrimitiveArray(List<Integer> values)`
 
-- do not use third-party libraries;
-- implement the conversion explicitly with loops first;
-- after review we will compare it with Streams and other approaches.
+Convert a `List<Integer>` into an `int[]`.
 
-Be ready to explain why this does **not** work as expected:
+Example:
+
+```text
+[4, 5, 6] -> [4, 5, 6]
+```
+
+Requirements:
+
+- preserve order;
+- an empty list returns an empty array;
+- if `values == null`, throw `IllegalArgumentException`;
+- if any list element is `null`, throw `IllegalArgumentException`;
+- the returned array must be independent from the input list;
+- implement the conversion explicitly with a loop.
+
+## Restrictions
+
+- no Streams for this module;
+- no third-party libraries.
+
+## Engineering questions
+
+Explain why this:
 
 ```java
 int[] numbers = {1, 2, 3};
 List<int[]> result = Arrays.asList(numbers);
 ```
 
-and why Java generics cannot use primitive type arguments such as `List<int>`.
+creates a list with **one element** rather than `List<Integer>`.
+
+Also explain why Java does not allow:
+
+```java
+List<int>
+```
 
 ---
 
-# Task 5 — Class layout and naming
+# Task 5 — Build a conventionally structured class
+
+## What to create
 
 Create:
 
 `src/main/java/com/javacg/skills/basics/StudentProfile.java`
 
-Required state:
+## Goal
 
-- constant `DEFAULT_LEVEL`;
-- static field counting created instances;
-- instance fields: `name`, `level`;
-- constructor accepting `name`;
-- constructor accepting `name` and `level`;
-- getters;
-- setter for `level`;
-- public method `describe()`;
-- private helper method used by `describe()`.
+Create a small class that demonstrates:
 
-Rules:
+- naming conventions;
+- constants;
+- static state;
+- instance state;
+- overloaded constructors;
+- constructor chaining;
+- validation;
+- getters/setters;
+- public behavior;
+- private helper methods;
+- conventional member organization.
 
-- follow conventional Java naming;
-- validate invalid names;
-- use constructor chaining where appropriate;
-- organize members in a clear conventional order;
-- do not expose mutable state unnecessarily.
+## Required state
 
-The exact behavioral contract is enforced by the tests.
+Create:
+
+```java
+DEFAULT_LEVEL
+```
+
+as a class constant.
+
+Create a static field that counts how many valid `StudentProfile` instances have been created.
+
+Create instance fields:
+
+```java
+name
+level
+```
+
+## Constructors
+
+Implement:
+
+```java
+StudentProfile(String name)
+StudentProfile(String name, int level)
+```
+
+The one-argument constructor must use `DEFAULT_LEVEL`.
+
+Use constructor chaining where appropriate.
+
+Invalid names must throw `IllegalArgumentException`.
+
+The following names are invalid:
+
+- `null`;
+- `""`;
+- whitespace-only strings such as `"   "`.
+
+## Required methods
+
+Implement getters for `name` and `level`.
+
+Implement:
+
+```java
+void setLevel(int level)
+```
+
+Implement:
+
+```java
+static int getCreatedCount()
+```
+
+Implement:
+
+```java
+String describe()
+```
+
+Expected format:
+
+```text
+Maksym [level=1]
+Alex [level=5]
+```
+
+`describe()` must use at least one private helper method.
+
+## Class-structure requirement
+
+Organize the class in a clear conventional order.
+
+Do not expose fields publicly.
 
 ---
 
@@ -203,7 +458,13 @@ From this directory run:
 gradle test
 ```
 
-Do not alter a failing assertion to make your solution pass. Fix the implementation.
+If you have a Gradle Wrapper later, prefer:
+
+```bash
+./gradlew test
+```
+
+Do not alter a failing assertion merely to make your solution pass. Fix the implementation.
 
 ---
 
@@ -211,10 +472,11 @@ Do not alter a failing assertion to make your solution pass. Fix the implementat
 
 When all tests pass:
 
-1. commit your solution;
-2. send the commit SHA;
-3. answer the engineering questions from this README in your own words;
-4. I will review correctness, naming, class organization, Java semantics, readability, tests, and explanations.
+1. commit your solution on `task/01-java-zero-basics`;
+2. push the branch;
+3. send the commit SHA;
+4. answer the engineering questions from this README in your own words;
+5. I will perform code review and grading.
 
 ## Evaluation
 
