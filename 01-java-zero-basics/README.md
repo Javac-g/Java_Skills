@@ -512,9 +512,9 @@ When all tests pass:
 
 1. commit your solution on `task/01-java-zero-basics`;
 2. push the branch;
-3. send the commit SHA;
-4. answer the engineering questions from this README in your own words;
-5. I will perform code review and grading.
+3. complete `answers/ANSWERS.md` with your engineering answers;
+4. send the commit SHA;
+5. I will review both the implementation and the written answers, then grade the module.
 
 ## Evaluation
 
