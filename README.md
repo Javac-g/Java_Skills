@@ -2,6 +2,8 @@
 
 Hands-on software-engineering training repository.
 
+See [`LEARNING_PLAN.md`](LEARNING_PLAN.md) for the full curriculum and progression roadmap.
+
 This repository is organized as a sequence of practical modules. Each module contains:
 
 - `THEORY.md` — required theory in English;
