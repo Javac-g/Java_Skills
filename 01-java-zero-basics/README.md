@@ -122,6 +122,14 @@ If `value` is an empty string, throw `IllegalArgumentException`.
 - do not use collections;
 - do not change the required method signatures.
 
+## Self-check for Task 1
+
+Run only this task's tests:
+
+```bash
+gradle task1Test
+```
+
 ## Engineering questions
 
 Be ready to explain:
@@ -200,6 +208,14 @@ sameReference(new String("java"), new String("java")) -> false
 sameReference(null, null) -> true
 ```
 
+## Self-check for Task 2
+
+Run only this task's tests:
+
+```bash
+gradle task2Test
+```
+
 ## Engineering questions
 
 Be ready to explain:
@@ -265,6 +281,14 @@ Each event must actually be added by the corresponding Java mechanism:
 
 The purpose is to prove the language execution order, not reproduce the expected answer manually.
 
+## Self-check for Task 3
+
+Run only this task's tests:
+
+```bash
+gradle task3Test
+```
+
 ## Engineering question
 
 Explain what changes when a superclass and subclass are involved.
@@ -327,6 +351,14 @@ Requirements:
 
 - no Streams for this module;
 - no third-party libraries.
+
+## Self-check for Task 4
+
+Run only this task's tests:
+
+```bash
+gradle task4Test
+```
 
 ## Engineering questions
 
@@ -486,14 +518,38 @@ Organize the class in a clear conventional order.
 
 Do not expose fields publicly.
 
+## Self-check for Task 5
+
+Run only this task's tests:
+
+```bash
+gradle task5Test
+```
+
 ---
 
 # Self-check
 
-From this directory run:
+You can verify each task immediately after implementing it:
+
+```text
+Task 1 -> gradle task1Test
+Task 2 -> gradle task2Test
+Task 3 -> gradle task3Test
+Task 4 -> gradle task4Test
+Task 5 -> gradle task5Test
+```
+
+After all five tasks are complete, run the complete module:
 
 ```bash
 gradle test
+```
+
+You can also explicitly run the aggregate task:
+
+```bash
+gradle allTasksTest
 ```
 
 If you have a Gradle Wrapper later, prefer:
