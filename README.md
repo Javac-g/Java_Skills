@@ -28,3 +28,15 @@ This repository is organized as a sequence of practical modules. Each module con
 | 01 | Java Zero Basics | Ready |
 
 The curriculum will expand from literal Java fundamentals through Core Java, OOP, Collections, Generics, JVM internals, algorithms/data structures, Spring, PostgreSQL, Hibernate, networking, concurrency, testing, Docker, Kubernetes, CI/CD, Linux, observability, cloud, design patterns, system design, and production engineering.
+
+
+## Test organization rule
+
+For every training module:
+
+- One learning task = one independently runnable test class.
+- Unfinished later tasks must not prevent an earlier task from being compiled and tested.
+- Each task gets its own Gradle verification task such as `task1Test`, `task2Test`, and so on.
+- The module-level `test` task runs the complete set after all tasks are implemented.
+
+This keeps feedback immediate while preserving a full final regression run.
