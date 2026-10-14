@@ -20,6 +20,45 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
+/*
+ * Each learning task has its own test source set.
+ *
+ * This is deliberate: Gradle normally compiles every class under src/test/java
+ * before running a filtered test. If tests for unfinished tasks reference
+ * production classes that do not exist yet, even "gradle test --tests ..."
+ * would fail during test compilation.
+ *
+ * Separate source sets let each task be compiled and tested independently.
+ */
+def taskTestSourceSets = [:]
+
+(1..5).each { taskNumber ->
+    def sourceSet = sourceSets.create("task${taskNumber}Test") {
+        java.srcDir "src/task${taskNumber}Test/java"
+        resources.srcDir "src/task${taskNumber}Test/resources"
+
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+
+    taskTestSourceSets[taskNumber] = sourceSet
+
+    tasks.register("task${taskNumber}Test", Test) {
+        group = 'verification'
+        description = "Runs only the tests for learning Task ${taskNumber}."
+        testClassesDirs = sourceSet.output.classesDirs
+        classpath = sourceSet.runtimeClasspath
+        useJUnitPlatform()
+    }
+}
+
+tasks.register('allTasksTest') {
+    group = 'verification'
+    description = 'Runs all task-specific tests for Module 01.'
+    dependsOn (1..5).collect { "task${it}Test" }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+    dependsOn 'allTasksTest'
 }
